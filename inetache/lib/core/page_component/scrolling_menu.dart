@@ -15,6 +15,10 @@ class ScrollingMenu extends StatefulWidget {
   final String description;
   final String date;
   String title;
+  VoidCallback? onTap;
+  Function? terminerFunction;
+  Function? modificationFunction;
+  
 
   ScrollingMenu({
     super.key,
@@ -23,7 +27,11 @@ class ScrollingMenu extends StatefulWidget {
     this.moyenne = false,
     this.grande = false,
     required this.statut,
-    required this.description, required this.date,
+    required this.description,
+    required this.date,
+    this.onTap,
+    this.terminerFunction,
+    this.modificationFunction
   });
 
   @override
@@ -83,9 +91,9 @@ class _ScrollingMenuState extends State<ScrollingMenu> {
                   ],
                 ),
               ),
-              const IconButton(
-                onPressed: null,
-                icon: Icon(
+              IconButton(
+                onPressed: ()=>widget.onTap!(),
+                icon: const Icon(
                   Icons.delete_forever_sharp,
                   color: CouleurApp.deleteColor,
                 ),
@@ -123,7 +131,7 @@ class _ScrollingMenuState extends State<ScrollingMenu> {
                       children: [
                         Text(
                           "Date : ${widget.date}",
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 13,
                               color: CouleurApp.titreColor),
@@ -133,14 +141,14 @@ class _ScrollingMenuState extends State<ScrollingMenu> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        widget.statut == "En cour"
+                        widget.statut == "En cours"
                             ? ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {widget.terminerFunction!();},
                                 child: const Text("Terminé?"),
                               )
                             : const SizedBox(),
                         TextButton(
-                          onPressed: () {Get.toNamed(AppRoute.modifierTache);}, 
+                          onPressed: () => widget.modificationFunction!(), 
                           child: const Text("Modifier?"),
                         ),
                       ],
