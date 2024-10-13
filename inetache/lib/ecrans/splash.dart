@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:inetache/routes/app_route.dart';
 
 class Splash extends StatelessWidget {
   const Splash({super.key});
@@ -9,8 +11,8 @@ class Splash extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Splash'),
       ),
-      body: const Center(
-        child: Text('Splash'),
+      body: Center(
+        child: ElevatedButton(onPressed: (){Get.offAllNamed(AppRoute.listeTache);}, child: Text("Commencer"))
       ),
     );
   }
