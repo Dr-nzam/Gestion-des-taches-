@@ -24,7 +24,8 @@ class _ListeTacheState extends State<ListeTache> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   int isDone = -1;
   int priorite = -1;
-  int numDate = -1;	
+  int numDate = -1;
+  String searchValeur = "";
   bool verification = false;
   String statut = "En cours";
   bool isPetite = false;
@@ -90,7 +91,16 @@ class _ListeTacheState extends State<ListeTache> {
           children: [
             FormWidget(
               controller: controllerSearch,
-              placeholder: "search Task",
+              placeholder: "Chercher une tache",
+              callback: (search) async{
+                setState(() {
+                  searchValeur = search;
+                 
+                  print(searchValeur);
+                  // controller.listUser(user.token['token'], search: search);
+                  // RechercheEvent(seach);
+                });
+              },
               suffixIcon: const IconButton(
                 onPressed: null,
                 icon: Icon(Icons.search),
@@ -146,7 +156,7 @@ class _ListeTacheState extends State<ListeTache> {
                         : CouleurApp.filterColor,
                   ),
                 ),
-                InkWell( 
+                InkWell(
                   onTap: () {
                     setState(() {
                       if (numDate == 1) {
@@ -163,11 +173,11 @@ class _ListeTacheState extends State<ListeTache> {
                   child: FilterWidget(
                     nomFiltre: "Date \u{2B06}",
                     backgroundColors: numDate == 1
-                      ? CouleurApp.primaryColor
-                      : CouleurApp.filterColor,
-                                    ),
+                        ? CouleurApp.primaryColor
+                        : CouleurApp.filterColor,
                   ),
-                InkWell( 
+                ),
+                InkWell(
                   onTap: () {
                     setState(() {
                       if (numDate == 2) {
@@ -184,9 +194,8 @@ class _ListeTacheState extends State<ListeTache> {
                   child: FilterWidget(
                     nomFiltre: "Date \u{2B07}",
                     backgroundColors: numDate == 2
-                          ? CouleurApp.primaryColor
-                          : CouleurApp.filterColor,
-                    
+                        ? CouleurApp.primaryColor
+                        : CouleurApp.filterColor,
                   ),
                 ),
                 InkWell(
@@ -223,7 +232,6 @@ class _ListeTacheState extends State<ListeTache> {
                         numDate = -1;
                       }
                     });
-                    print("${priorite}fbhvishvbshvihbsihvbids");
                   },
                   child: FilterWidget(
                     nomFiltre: "moyenne",
@@ -263,7 +271,9 @@ class _ListeTacheState extends State<ListeTache> {
                 future: _dbHelper.getTaches(
                     isDone: isDone,
                     priorite: priorite,
-                    verification: verification, numDate: numDate ), // Récupère la liste des tâches
+                    verification: verification,
+                    numDate: numDate,
+                    ), // Récupère la liste des tâches
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -272,74 +282,78 @@ class _ListeTacheState extends State<ListeTache> {
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Center(child: Text('Aucune tâche trouvée.'));
                   } else {
-                    final List<Tache> taches = snapshot.data!;
+                    final List<Tache> taches = snapshot.data!.obs;
 
-                    return ListView.builder(
-                      itemCount: taches.length,
-                      itemBuilder: (context, index) {
-                        final tache = taches[index];
-                        // print(tache.id)
-                        if (tache.priorite == 1) {
-                          isPetite = true;
-                          isMoyenne = false;
-                          isHaute = false;
-                        } else if (tache.priorite == 2) {
-                          isMoyenne = true;
-                          isPetite = false;
-                          isHaute = false;
-                        } else {
-                          isHaute = true;
-                          isPetite = false;
-                          isMoyenne = false;
-                        }
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: ScrollingMenu(
-                            title: tache.titre,
-                            date: tache.date,
-                            description: tache.description,
-                            statut: tache.isDone == 1 ? "Terminé" : "En cours",
-                            moyenne: isMoyenne,
-                            grande: isHaute,
-                            petite: isPetite,
-                            modificationFunction: () {
-                              Get.toNamed(AppRoute.modifierTache,
-                                  arguments: {'tache': tache});
-                            },
-                            terminerFunction: () async {
-                              try {
-                                Tache element = Tache(isDone: 1, id: tache.id);
-                                await _dbHelper.terminerTache(element);
+                    return Obx(
+                      () => ListView.builder(
+                        itemCount: taches.length,
+                        itemBuilder: (context, index) {
+                          final tache = taches[index];
+                          // print(tache.id)
+                          if (tache.priorite == 1) {
+                            isPetite = true;
+                            isMoyenne = false;
+                            isHaute = false;
+                          } else if (tache.priorite == 2) {
+                            isMoyenne = true;
+                            isPetite = false;
+                            isHaute = false;
+                          } else {
+                            isHaute = true;
+                            isPetite = false;
+                            isMoyenne = false;
+                          }
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: ScrollingMenu(
+                              title: tache.titre,
+                              date: tache.date,
+                              description: tache.description,
+                              statut:
+                                  tache.isDone == 1 ? "Terminé" : "En cours",
+                              moyenne: isMoyenne,
+                              grande: isHaute,
+                              petite: isPetite,
+                              modificationFunction: () {
+                                Get.toNamed(AppRoute.modifierTache,
+                                    arguments: {'tache': tache});
+                              },
+                              terminerFunction: () async {
+                                try {
+                                  Tache element =
+                                      Tache(isDone: 1, id: tache.id);
+                                  await _dbHelper.terminerTache(element);
 
+                                  setState(() {
+                                    tache.isDone = 1;
+                                  });
+
+                                  FlashToast.showFlashToast(
+                                      context: context,
+                                      title: "Félicitations	",
+                                      message:
+                                          "Vous avez terminé la tâche ${tache.titre}",
+                                      flashType: FlashType.success,
+                                      duration: 4);
+                                } catch (e) {
+                                  FlashToast.showFlashToast(
+                                      context: context,
+                                      title: "Erreur",
+                                      message: "L'erreur $e est survenue",
+                                      flashType: FlashType.error,
+                                      duration: 4);
+                                }
+                              },
+                              onTap: () async {
                                 setState(() {
-                                  tache.isDone = 1;
+                                  id = tache.id!;
+                                  showDeleteConfirmationDialog(id);
                                 });
-
-                                FlashToast.showFlashToast(
-                                    context: context,
-                                    title: "Félicitations	",
-                                    message:
-                                        "Vous avez terminé la tâche ${tache.titre}",
-                                    flashType: FlashType.success,
-                                    duration: 4);
-                              } catch (e) {
-                                FlashToast.showFlashToast(
-                                    context: context,
-                                    title: "Erreur",
-                                    message: "L'erreur $e est survenue",
-                                    flashType: FlashType.error,
-                                    duration: 4);
-                              }
-                            },
-                            onTap: () async {
-                              setState(() {
-                                id = tache.id!;
-                                showDeleteConfirmationDialog(id);
-                              });
-                            },
-                          ),
-                        );
-                      },
+                              },
+                            ),
+                          );
+                        },
+                      ),
                     );
                   }
                 },

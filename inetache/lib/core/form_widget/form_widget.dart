@@ -10,6 +10,7 @@ class FormWidget extends StatelessWidget {
   final String? errorMessage;
   final TextEditingController? controller;
   final TextInputType keyboardType;
+  Function(String)? callback;
 
    FormWidget({
     Key? key,
@@ -25,6 +26,7 @@ class FormWidget extends StatelessWidget {
       color: Colors.white24,
     ),
     this.errorMessage = 'Veuillez remplir ce champ.',
+    this.callback,
   }) : super(key: key);
 
   @override
@@ -59,7 +61,9 @@ class FormWidget extends StatelessWidget {
         return null;
       },
       onChanged: (value) {
-        // Handle changes to the text field's value
+        if (callback != null) {
+          callback!(value);
+        }
       },
     );
   }

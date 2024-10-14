@@ -53,7 +53,11 @@ class DatabaseHelper {
   }
 
   Future<List<Tache>> getTaches(
-      {int isDone = -1, int priorite = -1, bool verification = false, int numDate = -1 }) async {
+      {int isDone = -1,
+      int priorite = -1,
+      bool verification = false,
+      int numDate = -1,
+      String searchValeur = ''}) async {
     List<Map<String, dynamic>> maps = [];
     final db = await database;
 
@@ -76,11 +80,13 @@ class DatabaseHelper {
             .rawQuery('SELECT * FROM tache WHERE priorite = 3  ORDER BY -id');
       }
 
-
       if (numDate == 1) {
         maps = await db.rawQuery("SELECT * FROM tache ORDER BY date ASC");
       } else if (numDate == 2) {
         maps = await db.rawQuery("SELECT * FROM tache ORDER BY date DESC");
+      }
+      if (searchValeur != "") {
+        maps = await db.rawQuery('SELECT * FROM tache WHERE titre LIKE "%${searchValeur}%" ORDER BY -id');
       }
     } else {
       maps = await db.rawQuery('SELECT * FROM tache ORDER BY -id');
