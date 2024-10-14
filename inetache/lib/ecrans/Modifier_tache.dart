@@ -27,7 +27,7 @@ class _ModifierTacheState extends State<ModifierTache> {
   @override
   void initState() {
     super.initState();
-    
+
     final args = Get.arguments;
     Tache tache = args['tache'];
 
@@ -188,12 +188,27 @@ class _ModifierTacheState extends State<ModifierTache> {
                         id: id,
                         titre: controlerTitre.text,
                         description: controlerDescription.text,
-                        priorite: choix!, 
+                        priorite: choix!,
                         date: controlerDate.text,
                       );
-                      await _dbHelper.updateTache(element);
-
-                      Get.offAllNamed(AppRoute.listeTache);
+                      try {
+                        await _dbHelper.updateTache(element);
+                        FlashToast.showFlashToast(
+                            context: context,
+                            title: "Succès",
+                            message: "Tâche modifiée avec succès",
+                            flashType: FlashType.success,
+                            duration: 3);
+                        Get.offAllNamed(AppRoute.listeTache);
+                      } catch (e) {
+                        FlashToast.showFlashToast(
+                            context: context,
+                            title: "Erreur",
+                            message:
+                                "Erreur $e lors de la modification de la tâche",
+                            flashType: FlashType.error,
+                            duration: 4);
+                      }
                     } else {
                       FlashToast.showFlashToast(
                         context: context,

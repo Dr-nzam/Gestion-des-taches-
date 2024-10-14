@@ -5,11 +5,14 @@ class FilterWidget extends StatelessWidget {
   final String nomFiltre;
   final Color backgroundColors;
   final Color textColors;
-  const FilterWidget(
-      {super.key,
-      required this.nomFiltre,
-      this.backgroundColors = CouleurApp.filterColor,
-      this.textColors = CouleurApp.textprincipalColor});
+  // Function ? onTap;
+   FilterWidget({
+    super.key,
+    required this.nomFiltre,
+    this.backgroundColors = CouleurApp.filterColor,
+    this.textColors = CouleurApp.textprincipalColor,
+    // this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +30,7 @@ class FilterWidget extends StatelessWidget {
               child: Text(
             nomFiltre,
             style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                color: textColors),
+                fontSize: 15, fontWeight: FontWeight.w500, color: textColors),
           )),
         )
       ],

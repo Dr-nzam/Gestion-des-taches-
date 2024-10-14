@@ -43,36 +43,72 @@ class DatabaseHelper {
     await db.rawInsert('''
       INSERT INTO tache (titre, description, priorite, date, isDone) 
       VALUES (?, ?, ?, ?, ?)
-    ''', [tache.titre, tache.description, tache.priorite, tache.date, tache.isDone]);	
+    ''', [
+      tache.titre,
+      tache.description,
+      tache.priorite,
+      tache.date,
+      tache.isDone
+    ]);
   }
 
-Future<List<Tache>> getTaches() async {
-  final db = await database;
-  final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT * FROM tache ORDER BY -id');
+  Future<List<Tache>> getTaches(
+      {int isDone = -1, int priorite = -1, bool verification = false, int numDate = -1 }) async {
+    List<Map<String, dynamic>> maps = [];
+    final db = await database;
 
-  return List.generate(maps.length, (i) {
-    return Tache(
-      id: maps[i]['id'],
-      titre: maps[i]['titre'] ?? '', // Assurez-vous de gérer les valeurs nulles
-      description: maps[i]['description'] ?? '',
-      priorite: maps[i]['priorite'] ?? 0, // Utiliser une valeur par défaut
-      date: maps[i]['date'] ?? '',
-      isDone: maps[i]['isDone'] ?? 0, // Assurez-vous de gérer les valeurs nulles
-    );
-  });
-}
+    if (verification) {
+      if (isDone == 0) {
+        maps = await db
+            .rawQuery('SELECT * FROM tache WHERE isDone = 0  ORDER BY -id');
+      } else if (isDone == 1) {
+        maps = await db
+            .rawQuery('SELECT * FROM tache WHERE isDone = 1  ORDER BY -id');
+      }
+      if (priorite == 1) {
+        maps = await db
+            .rawQuery('SELECT * FROM tache WHERE priorite = 1  ORDER BY -id');
+      } else if (priorite == 2) {
+        maps = await db
+            .rawQuery('SELECT * FROM tache WHERE priorite = 2  ORDER BY -id');
+      } else if (priorite == 3) {
+        maps = await db
+            .rawQuery('SELECT * FROM tache WHERE priorite = 3  ORDER BY -id');
+      }
 
 
-    Future<void> terminerTache(Tache tache) async {
+      if (numDate == 1) {
+        maps = await db.rawQuery("SELECT * FROM tache ORDER BY date ASC");
+      } else if (numDate == 2) {
+        maps = await db.rawQuery("SELECT * FROM tache ORDER BY date DESC");
+      }
+    } else {
+      maps = await db.rawQuery('SELECT * FROM tache ORDER BY -id');
+    }
+
+    return List.generate(maps.length, (i) {
+      return Tache(
+        id: maps[i]['id'],
+        titre:
+            maps[i]['titre'] ?? '', // Assurez-vous de gérer les valeurs nulles
+        description: maps[i]['description'] ?? '',
+        priorite: maps[i]['priorite'] ?? 0, // Utiliser une valeur par défaut
+        date: maps[i]['date'] ?? '',
+        isDone:
+            maps[i]['isDone'] ?? 0, // Assurez-vous de gérer les valeurs nulles
+      );
+    });
+  }
+
+  Future<void> terminerTache(Tache tache) async {
     final db = await database;
 
     await db.rawUpdate('''
       UPDATE tache 
       SET isDone = ?
       WHERE id = ?
-    ''', [ tache.isDone, tache.id ]);
+    ''', [tache.isDone, tache.id]);
   }
-
 
   Future<void> updateTache(Tache tache) async {
     final db = await database;
@@ -80,7 +116,13 @@ Future<List<Tache>> getTaches() async {
       UPDATE tache 
       SET titre = ?, description = ?, priorite = ?, date = ?
       WHERE id = ?
-    ''', [tache.titre, tache.description, tache.priorite, tache.date,tache.id,]);
+    ''', [
+      tache.titre,
+      tache.description,
+      tache.priorite,
+      tache.date,
+      tache.id,
+    ]);
   }
 
   Future<String> deleteTache(int id) async {
