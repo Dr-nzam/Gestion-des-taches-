@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:get/get.dart';
 import 'package:inetache/core/colors.dart';
 import 'package:inetache/core/page_component/priorite.dart';
-import 'package:inetache/routes/app_route.dart';
+
 // import 'package:google_fonts/google_fonts.dart';
 
 // ignore: must_be_immutable

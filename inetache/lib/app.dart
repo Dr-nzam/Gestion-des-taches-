@@ -1,37 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:inetache/controller/theme_controller.dart';
 import 'package:inetache/core/colors.dart';
 import 'package:inetache/routes/app_page.dart';
 import 'package:inetache/routes/app_route.dart';
 
 class MyApp extends StatelessWidget {
-  final ThemeController themeController = Get.put(ThemeController());
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      return
-    GetMaterialApp(
+    return GetMaterialApp(
       title: 'Inet-Tache',
-
-      // theme: ThemeData(
-      //   scaffoldBackgroundColor:
-      //       CouleurApp.getBackgroundColor(themeController.isDarkMode.value),
-      //   appBarTheme: AppBarTheme(
-      //     backgroundColor:
-      //         CouleurApp.getBackgroundColor(themeController.isDarkMode.value),
-      //     titleTextStyle: TextStyle(
-      //         color: CouleurApp.getTextPrincipalColor(
-      //             themeController.isDarkMode.value)),
-      //   ),
-      //   textTheme: TextTheme(
-      //       // Ajoutez d'autres styles si nécessaire
-      //       titleLarge: TextStyle(color: CouleurApp.getTextPrincipalColor(themeController.isDarkMode.value)), // Pour les titres
-      //       bodyMedium: TextStyle(color: CouleurApp.getTextPrincipalColor(themeController.isDarkMode.value)), // Texte normal
-      //     ),
-      // ),
-      
-
       theme: ThemeData(
         primarySwatch: CouleurApp.primaryColor,
         primaryColor:CouleurApp.primaryColor,
@@ -46,5 +25,5 @@ class MyApp extends StatelessWidget {
       getPages: AppPage.page,
       // home: const MyHomePage(title: 'Inetache'),
     );
-  });}
+  }
 }

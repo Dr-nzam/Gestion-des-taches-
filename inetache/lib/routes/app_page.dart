@@ -13,7 +13,7 @@ class AppPage {
     GetPage(
         name: AppRoute.ajouterTache, page: () => const AjouterTache()),
     GetPage(
-        name: AppRoute.listeTache, page: () => const ListeTache()),
+        name: AppRoute.listeTache, page: () =>  ListeTache()),
     GetPage(
         name: AppRoute.modifierTache, page: () => const ModifierTache()),
     GetPage(
